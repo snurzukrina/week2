@@ -25,9 +25,13 @@ async function run() {
     const db = client.db("testDB");
     const driverCollection = db.collection("drivers");
 
-    // Insert all drivers
+    // **CLEAR OLD DATA** (Fixes incorrect starting values)
+    await driverCollection.deleteMany({});
+    console.log("Cleared old driver data.");
+
+    // Insert fresh driver data
     await driverCollection.insertMany(drivers);
-    console.log("Inserted drivers into MongoDB");
+    console.log("Inserted fresh drivers into MongoDB");
 
     // Query: Find all high-rated drivers (rating >= 4.5)
     const highRatedDrivers = await driverCollection.find({
@@ -40,7 +44,7 @@ async function run() {
     console.log("All drivers before update:");
     console.log(await driverCollection.find().toArray());
 
-    // Update: Increase all drivers' ratings by 0.1 where rating >= 4.0
+    // **UPDATE MANY**: Increase all drivers' ratings by 0.1 where rating >= 4.0
     const updateResult = await driverCollection.updateMany(
       { rating: { $gte: 4.0 } },
       { $inc: { rating: 0.1 } }
@@ -50,14 +54,6 @@ async function run() {
 
     // Debug: Show all drivers after update
     console.log("All drivers after update:");
-    console.log(await driverCollection.find().toArray());
-
-    // Delete all drivers with rating ≤ 4.2
-    const deleteResult = await driverCollection.deleteMany({ rating: { $lte: 4.2 } });
-    console.log(`Deleted ${deleteResult.deletedCount} low-rated drivers.`);
-
-    // Debug: Show all drivers after delete
-    console.log("All drivers after delete:");
     console.log(await driverCollection.find().toArray());
 
   } catch (err) {
