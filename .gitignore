@@ -1,0 +1,4 @@
+#depencies
+/node_modulesnode_modules/
+.env
+*.log
