@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #eee;
+    }
+    nav button {
+      padding: 1rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    nav button.active {
+      background: #007bff;
+      color: white;
+    }
+    .tab-content {
+      padding: 2rem;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      gap: 0.5rem;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    #response {
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      background: #fff;
+      padding: 1rem;
+      border: 1px solid #ccc;
+    }
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Ride-Hailing API Dashboard</h1>
+</header>
+
+<nav>
+  <button class="tab-btn active" data-tab="post">POST</button>
+  <button class="tab-btn" data-tab="get">GET</button>
+  <button class="tab-btn" data-tab="patch">PATCH</button>
+  <button class="tab-btn" data-tab="delete">DELETE</button>
+</nav>
+
+<div id="post" class="tab-content active">
+  <h2>Register User (POST)</h2>
+  <form id="registerForm">
+    <input type="text" name="name" placeholder="Name" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <select name="role" required>
+      <option value="rider">Rider</option>
+      <option value="driver">Driver</option>
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<div id="get" class="tab-content">
+  <h2>GET Endpoint</h2>
+  <p>Define your GET requests here...</p>
+</div>
+
+<div id="patch" class="tab-content">
+  <h2>PATCH Endpoint</h2>
+  <p>Define your PATCH requests here...</p>
+</div>
+
+<div id="delete" class="tab-content">
+  <h2>DELETE Endpoint</h2>
+  <p>Define your DELETE requests here...</p>
+</div>
+
+<div id="response"></div>
+
+<script>
+  // Tab switching logic
+  document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+      button.classList.add('active');
+      document.getElementById(button.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Handle register form submission
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      password: form.password.value,
+      role: form.role.value
+    };
+
+    try {
+      const res = await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+    } catch (error) {
+      document.getElementById('response').textContent = 'Error: ' + error.message;
+    }
+  });
+</script>
+
+</body>
+</html>
